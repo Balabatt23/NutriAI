@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <style>
+        .calendar-day {
+            transition: all 0.2s ease;
+        }
+        .calendar-day:hover {
+            background-color: #f3f4f6;
+        }
+        .calendar-day.selected {
+            background-color: #10b981;
+            color: white;
+        }
+        .meal-icon {
+            background-color: #f3f4f6;
+            border-radius: 12px;
+            padding: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen pb-20 lg:pb-0">
+        <!-- Mobile Header -->
+        <div class="lg:hidden bg-white shadow-sm sticky top-0 z-50">
+            <div class="flex items-center justify-between p-4">
+                <div class="flex items-center space-x-3">
+                    <i data-feather="arrow-left" class="w-6 h-6 text-gray-700 cursor-pointer" onclick="goBack()"></i>
+                    <h1 class="text-xl font-semibold text-gray-900">History</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <!-- Desktop Sidebar -->
+            <div class="hidden lg:block w-64 bg-white h-screen shadow-lg sticky top-0">
+                <div class="p-6">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <img 
+                            src="https://images.unsplash.com/photo-1494790108755-2616b169ad04?w=48&h=48&fit=crop&crop=face&auto=format" 
+                            alt="Profile" 
+                            class="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div>
+                            <h2 class="text-gray-800 font-semibold">John Doe</h2>
+                            <p class="text-gray-500 text-sm">Nutrition Tracker</p>
+                        </div>
+                    </div>
+                    
+                    <nav class="space-y-2">
+                        <a href="#" class="flex items-center space-x-3 p-3 text-gray-600 hover:bg-gray-50 rounded-lg">
+                            <i data-feather="home" class="w-5 h-5"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 text-blue-600 bg-blue-50 rounded-lg">
+                            <i data-feather="calendar" class="w-5 h-5"></i>
+                            <span class="font-medium">History</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 text-gray-600 hover:bg-gray-50 rounded-lg">
+                            <i data-feather="user" class="w-5 h-5"></i>
+                            <span>Profile</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <div class="max-w-4xl mx-auto p-4 lg:p-8">
+                    <!-- Desktop Header -->
+                    <div class="hidden lg:flex items-center justify-between mb-8">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">History</h1>
+                            <p class="text-gray-600 mt-1">View your nutrition history</p>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Section -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                        <!-- Calendar Header -->
+                        <div class="flex items-center justify-between mb-6">
+                            <button onclick="previousMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+                                <i data-feather="chevron-left" class="w-6 h-6 text-gray-600"></i>
+                            </button>
+                            <h2 class="text-xl font-semibold text-gray-900" id="current-month">October 2024</h2>
+                            <button onclick="nextMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+                                <i data-feather="chevron-right" class="w-6 h-6 text-gray-600"></i>
+                            </button>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="grid grid-cols-7 gap-1 mb-2">
+                            <div class="text-center font-medium text-gray-600 py-2">S</div>
+                            <div class="text-center font-medium text-gray-600 py-2">M</div>
+                            <div class="text-center font-medium text-gray-600 py-2">T</div>
+                            <div class="text-center font-medium text-gray-600 py-2">W</div>
+                            <div class="text-center font-medium text-gray-600 py-2">T</div>
+                            <div class="text-center font-medium text-gray-600 py-2">F</div>
+                            <div class="text-center font-medium text-gray-600 py-2">S</div>
+                        </div>
+
+                        <div class="grid grid-cols-7 gap-1" id="calendar-grid">
+                            <!-- Calendar days will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Selected Date Details -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6" id="selected-date">October 22, 2024</h3>
+                        
+                        <!-- Meals List -->
+                        <div class="space-y-4" id="meals-list">
+                            <!-- Breakfast -->
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                                <div class="meal-icon">
+                                    <i data-feather="coffee" class="w-6 h-6 text-gray-700"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Breakfast</h4>
+                                    <p class="text-green-600 text-sm font-medium">230 kcal</p>
+                                </div>
+                            </div>
+
+                            <!-- Lunch -->
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                                <div class="meal-icon">
+                                    <i data-feather="sun" class="w-6 h-6 text-gray-700"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Lunch</h4>
+                                    <p class="text-green-600 text-sm font-medium">450 kcal</p>
+                                </div>
+                            </div>
+
+                            <!-- Dinner -->
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                                <div class="meal-icon">
+                                    <i data-feather="moon" class="w-6 h-6 text-gray-700"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Dinner</h4>
+                                    <p class="text-green-600 text-sm font-medium">600 kcal</p>
+                                </div>
+                            </div>
+
+                            <!-- Snacks -->
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+                                <div class="meal-icon">
+                                    <i data-feather="cookie" class="w-6 h-6 text-gray-700"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Snacks</h4>
+                                    <p class="text-green-600 text-sm font-medium">120 kcal</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Calories for the Day -->
+                        <div class="mt-6 pt-4 border-t border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-900">Total Calories</span>
+                                <span class="text-2xl font-bold text-green-600">1,400 kcal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t">
+            <div class="flex items-center justify-around py-2">
+                <a href="#" class="flex flex-col items-center p-3 text-gray-600">
+                    <i data-feather="home" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-3 text-blue-600">
+                    <i data-feather="calendar" class="w-6 h-6"></i>
+                    <span class="text-xs font-medium mt-1">History</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-3 text-gray-600">
+                    <i data-feather="user" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">Profile</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Calendar functionality
+        let currentDate = new Date();
+        let selectedDate = new Date(2024, 9, 22); // October 22, 2024
+
+        // Sample data for different dates
+        const historyData = {
+            '2024-10-22': {
+                meals: [
+                    { type: 'Breakfast', calories: 230, icon: 'coffee' },
+                    { type: 'Lunch', calories: 450, icon: 'sun' },
+                    { type: 'Dinner', calories: 600, icon: 'moon' },
+                    { type: 'Snacks', calories: 120, icon: 'cookie' }
+                ]
+            },
+            '2024-10-05': {
+                meals: [
+                    { type: 'Breakfast', calories: 300, icon: 'coffee' },
+                    { type: 'Lunch', calories: 500, icon: 'sun' },
+                    { type: 'Dinner', calories: 550, icon: 'moon' }
+                ]
+            },
+            '2024-10-15': {
+                meals: [
+                    { type: 'Breakfast', calories: 280, icon: 'coffee' },
+                    { type: 'Lunch', calories: 420, icon: 'sun' },
+                    { type: 'Dinner', calories: 680, icon: 'moon' },
+                    { type: 'Snacks', calories: 150, icon: 'cookie' }
+                ]
+            }
+        };
+
+        function generateCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update month display
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
+
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.innerHTML = '';
+
+            // Add empty cells for days before the first day of month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'h-12';
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'h-12 flex items-center justify-center cursor-pointer calendar-day rounded-lg text-sm font-medium';
+                dayCell.textContent = day;
+                
+                // Check if this day has data
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (historyData[dateKey]) {
+                    dayCell.classList.add('text-green-600', 'font-semibold');
+                }
+                
+                // Mark selected date
+                if (selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year) {
+                    dayCell.classList.add('selected');
+                }
+                
+                dayCell.addEventListener('click', () => selectDate(year, month, day));
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+
+        function selectDate(year, month, day) {
+            selectedDate = new Date(year, month, day);
+            generateCalendar();
+            updateSelectedDateDetails();
+        }
+
+        function updateSelectedDateDetails() {
+            const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            const dateStr = selectedDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            document.getElementById('selected-date').textContent = dateStr;
+            
+            const mealsList = document.getElementById('meals-list');
+            const data = historyData[dateKey];
+            
+            if (data) {
+                mealsList.innerHTML = '';
+                let totalCalories = 0;
+                
+                data.meals.forEach(meal => {
+                    totalCalories += meal.calories;
+                    const mealDiv = document.createElement('div');
+                    mealDiv.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-xl';
+                    mealDiv.innerHTML = `
+                        <div class="meal-icon">
+                            <i data-feather="${meal.icon}" class="w-6 h-6 text-gray-700"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${meal.type}</h4>
+                            <p class="text-green-600 text-sm font-medium">${meal.calories} kcal</p>
+                        </div>
+                    `;
+                    mealsList.appendChild(mealDiv);
+                });
+                
+                // Update total calories
+                const totalDiv = document.createElement('div');
+                totalDiv.className = 'mt-6 pt-4 border-t border-gray-200';
+                totalDiv.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-semibold text-gray-900">Total Calories</span>
+                        <span class="text-2xl font-bold text-green-600">${totalCalories.toLocaleString()} kcal</span>
+                    </div>
+                `;
+                mealsList.appendChild(totalDiv);
+                
+                feather.replace();
+            } else {
+                mealsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i data-feather="calendar-x" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                        <p class="text-gray-500">No nutrition data for this date</p>
+                    </div>
+                `;
+                feather.replace();
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar();
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Initialize
+        generateCalendar();
+        updateSelectedDateDetails();
+    </script>
+</body>
+</html>
