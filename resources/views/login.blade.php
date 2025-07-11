@@ -152,13 +152,16 @@
                 <p class="text-gray-600 mt-2">Sign in to continue your health journey</p>
             </div>
 
-            <form id="loginForm" class="space-y-6">
+            <form method="POST" action="/login" class="space-y-6">
+                @csrf
+                
                 <!-- Email Input -->
                 <div class="relative">
                     <input 
                         type="email" 
                         id="email" 
                         placeholder="Email"
+                        name="email"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >
@@ -175,6 +178,7 @@
                         type="password" 
                         id="password" 
                         placeholder="Password"
+                        name="password"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >

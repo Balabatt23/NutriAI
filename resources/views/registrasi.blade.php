@@ -152,13 +152,16 @@
                 <p class="text-gray-600 mt-2">Sign up to continue your health journey</p>
             </div>
 
-            <form id="loginForm" class="space-y-6">
+            <form action="/register" method="POST" class="space-y-6">
+                @csrf
+
                 <!-- Name Input -->
                  <div class="relative">
                     <input 
                         type="text" 
                         id="name" 
                         placeholder="Name"
+                        name="username"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >
@@ -169,6 +172,7 @@
                         type="email" 
                         id="email" 
                         placeholder="Email"
+                        name="email"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >
@@ -185,6 +189,7 @@
                         type="password" 
                         id="password" 
                         placeholder="Password"
+                        name="password"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >
@@ -206,6 +211,7 @@
                         type="password" 
                         id="confirm_password" 
                         placeholder="Confirm Password"
+                        name="password_confirmation"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >
@@ -263,7 +269,7 @@
             <!-- Sign Up Link -->
             <div class="text-center mt-8">
                 <p class="text-gray-600">
-                    Don't have an account? 
+                    Already have an account? 
                     <a href="login" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
                         Sign In
                     </a>
