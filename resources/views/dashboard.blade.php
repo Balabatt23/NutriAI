@@ -1,3 +1,7 @@
+@php
+    $user = Auth::user();
+@endphp
+
 <x-layout title="dashboard">
     <div class="flex-1">
         <div class="max-w-4xl mx-auto p-4 lg:p-8">
@@ -27,7 +31,7 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900">Calories</h3>
-                        <span class="text-lg font-semibold text-gray-700">1200/2000</span>
+                        <span class="text-lg font-semibold text-gray-700">{{ $day_calorie }}/2000</span>
                     </div>
                     
                     <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
@@ -69,30 +73,17 @@
             <div class="bg-white rounded-2xl p-6 shadow-sm mb-8">
                 <h3 class="text-xl font-semibold text-gray-900 mb-6">Meals</h3>
                 
+
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between py-3">
-                        <div>
-                            <h4 class="font-medium text-gray-900">Oatmeal with Berries</h4>
-                            <p class="text-green-600 text-sm">Breakfast</p>
+                    @foreach($meals as $meal)
+                        <div class="flex items-center justify-between py-3">
+                            <div>
+                                <h4 class="font-medium text-gray-900">{{ $meal->food_name }}</h4>
+                                <p class="text-green-600 text-sm">Breakfast</p>
+                            </div>
+                            <span class="font-semibold text-gray-900">350 kcal</span>
                         </div>
-                        <span class="font-semibold text-gray-900">350 kcal</span>
-                    </div>
-                    
-                    <div class="flex items-center justify-between py-3">
-                        <div>
-                            <h4 class="font-medium text-gray-900">Chicken Salad</h4>
-                            <p class="text-green-600 text-sm">Lunch</p>
-                        </div>
-                        <span class="font-semibold text-gray-900">450 kcal</span>
-                    </div>
-                    
-                    <div class="flex items-center justify-between py-3">
-                        <div>
-                            <h4 class="font-medium text-gray-900">Salmon with Vegetables</h4>
-                            <p class="text-green-600 text-sm">Dinner</p>
-                        </div>
-                        <span class="font-semibold text-gray-900">400 kcal</span>
-                    </div>
+                    @endForeach
                 </div>
             </div>
 
@@ -110,20 +101,26 @@
         </div>
     </div>
 
+    <form action="/gemini_api" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="file">
+        <button type="submit">submit</button>
+    </form>
+
 
 <!-- Komponen Modal -->
 <div id="formModal" class="hidden">
     <h2 class="text-xl font-bold mb-4">Form Pendaftaran</h2>
     
-    <form method="POST" action="/daftar">
+    <form method="POST" action="/add-meal">
         @csrf
         <div class="mb-4">
-            <label class="block">Nama</label>
-            <input type="text" name="nama" class="w-full border rounded p-2" required>
+            <label class="block">Nama makanan</label>
+            <input type="text" name="food_name"  class="w-full border rounded p-2" required>
         </div>
         <div class="mb-4">
-            <label class="block">Email</label>
-            <input type="email" name="email" class="w-full border rounded p-2" required>
+            <label class="block">Kalori</label>
+            <input type="number" name="calories" class="w-full border rounded p-2" required>
         </div>
 
         <div class="flex justify-end gap-2">
@@ -136,6 +133,22 @@
                 Kirim
             </button>
         </div>
+    </form>
+</div>
+
+<!-- Komponen Modal -->
+<div>
+    <h2 class="text-xl font-bold mb-4">Form Pendaftaran</h2>
+    
+    <form method="POST" action="/gemini_api">
+        @csrf
+        <div class="mb-4">
+            <label class="block">Nama makanan</label>
+            <input type="file" name="file"  class="w-full border rounded p-2" required>
+
+        </div>
+        <button type="submit">submit</button>
+
     </form>
 </div>
 

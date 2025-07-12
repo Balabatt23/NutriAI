@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DailyConsumption;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,20 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function dashboard()
+    {
+        $user = Auth::user();
+
+        $meals = $user->daily_consumption;
+
+        $day_calories_total = $user->daily_consumption()->sum('calories');
+
+        return view('dashboard', [
+            'meals' => $meals,
+            'day_calorie' => $day_calories_total
+        ]);
+    }
+
     public function login(Request $request)
     {
         try{
@@ -21,6 +36,8 @@ class UserController extends Controller
             if(!Auth::attempt($field)){
                 throw new \Exception ('Wrong email or password');
             }
+
+            
 
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');            
@@ -44,7 +61,6 @@ class UserController extends Controller
     public function create(Request $request)
     {
         try{
-            
             $field = $request->validate([
                 'username' => 'required',
                 'email' => 'required',
@@ -66,15 +82,24 @@ class UserController extends Controller
                 throw new \Exception ('Wrong email or password');
             }
 
-            // dd($new_user);
-
             $request->session()->regenerate();
             return redirect()->intended('/dashboard'); 
 
         }catch(\Exception $e){
-            dd($e);
 
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    public function update(Request $request)
+    {
+        $field = $request->validate([
+
+        ]);
+    }
+
+    public function delete(User $user)
+    {
+        
     }
 }

@@ -9,4 +9,9 @@ class DailyConsumption extends Model
     protected $fillable = [
         'food_name', 'calories', 'user_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

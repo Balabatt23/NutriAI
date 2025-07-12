@@ -49,4 +49,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function daily_calorie()
+    {
+        return $this->hasMany(DailyCalorie::class, 'user_id', 'id');
+    }
+
+    public function daily_activity()
+    {
+        return $this->hasMany(DailyActivity::class, 'user_id', 'id');
+    }
+
+    public function daily_consumption()
+    {
+        return $this->hasMany(DailyConsumption::class, 'user_id', 'id');
+    }
+
+    public function weight_history()
+    {
+        return $this->hasMany(BodyWeightHistory::class, 'user_id', 'id');
+    }
 }
