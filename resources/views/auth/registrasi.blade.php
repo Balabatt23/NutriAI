@@ -152,7 +152,7 @@
                 <p class="text-gray-600 mt-2">Sign up to continue your health journey</p>
             </div>
 
-            <form action="/register" method="POST" class="space-y-6">
+            <form action="{{ route('register') }}" method="POST" class="space-y-6">
                 @csrf
 
                 <!-- Name Input -->
@@ -209,7 +209,7 @@
                 <div class="relative">
                     <input 
                         type="password" 
-                        id="confirm_password" 
+                        id="passwordConfirm" 
                         placeholder="Confirm Password"
                         name="password_confirmation"
                         required
@@ -217,10 +217,10 @@
                     >
                     <button 
                         type="button" 
-                        onclick="togglePassword()"
+                        onclick="togglePasswordConfirm()"
                         class="absolute inset-y-0 right-0 flex items-center pr-4"
                     >
-                        <svg id="eyeIcon" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg id="eyeIconConfirm" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
@@ -270,7 +270,7 @@
             <div class="text-center mt-8">
                 <p class="text-gray-600">
                     Already have an account? 
-                    <a href="login" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
+                    <a href="{{route('login')}}" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
                         Sign In
                     </a>
                 </p>
@@ -282,6 +282,25 @@
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.05 6.05m3.828 3.828L12 12m-3.172-3.172L6.05 6.05m7.778 7.778l3.172 3.172M12 12l3.172-3.172M12 12l-3.172 3.172"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>
+                `;
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                `;
+            }
+        }
+
+        function togglePasswordConfirm() {
+            const passwordInput = document.getElementById('passwordConfirm');
+            const eyeIcon = document.getElementById('eyeIconConfirm');
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';

@@ -152,7 +152,7 @@
                 <p class="text-gray-600 mt-2">Sign in to continue your health journey</p>
             </div>
 
-            <form method="POST" action="/login" class="space-y-6">
+            <form method="POST" action="{{ route('Login') }}" class="space-y-6">
                 @csrf
                 
                 <!-- Email Input -->
@@ -252,7 +252,7 @@
             <div class="text-center mt-8">
                 <p class="text-gray-600">
                     Don't have an account? 
-                    <a href="registrasi" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
+                    <a href="{{ route('registrasi') }}" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
                         Sign up
                     </a>
                 </p>
