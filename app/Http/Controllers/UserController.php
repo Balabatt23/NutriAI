@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
+    public function viewLogin() {
+        return view('auth.login');
+    }
+
+    public function viewRegister() {
+        return view('auth.registrasi');
+    }
     public function dashboard()
     {
         $user = Auth::user();
@@ -60,35 +68,21 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-        try{
-            $field = $request->validate([
-                'username' => 'required',
-                'email' => 'required',
-                'password' => 'required'
-            ]);
-            
-            $password = $field['password'];
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-            $field['password'] = Hash::make($field['password']);
-
-            $new_user = User::create($field);
-
-            $user_login = [
-                'email' => $new_user->email,
-                'password' => $password
-            ];
-
-            if(!Auth::attempt($user_login)){
-                throw new \Exception ('Wrong email or password');
-            }
-
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard'); 
-
-        }catch(\Exception $e){
-
-            return redirect()->back()->with('error', $e->getMessage());
-        }
+        $request['status'] = 'verify';
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'status' => $request->status
+        ]);
+        Auth::login($user);
+        return redirect('/dashboard');
     }
 
     public function update(Request $request)

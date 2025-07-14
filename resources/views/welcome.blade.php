@@ -89,7 +89,7 @@
                     </nav>
                     
                     <div class="flex items-center space-x-4">
-                        <a href="login" class="hidden md:block text-gray-600 hover:text-emerald-600 transition-colors">Sign In</a>
+                        <a href="{{ route('login') }}" class="hidden md:block text-gray-600 hover:text-emerald-600 transition-colors">Sign In</a>
                         <button class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full transition-colors">
                             Get Started
                         </button>

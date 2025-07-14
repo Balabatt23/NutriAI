@@ -20,7 +20,7 @@ return new class extends Migration
             $table->float('height_target')->nullable();
             $table->text('profile_pic')->nullable();
             $table->string('password');
-            
+            $table->enum('status',['verify','active','banned']);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

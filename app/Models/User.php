@@ -24,7 +24,8 @@ class User extends Authenticatable
         'height', 
         'weight',
         'weight_target',
-        'profile_pic'
+        'profile_pic',
+        'status'
     ];
 
     /**
