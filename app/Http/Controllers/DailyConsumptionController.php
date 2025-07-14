@@ -62,6 +62,7 @@ class DailyConsumptionController extends Controller
 
         DailyConsumption::insert($datas);
 
-        dd($datas);
+        
+
     }
 }
