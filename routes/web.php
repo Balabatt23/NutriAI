@@ -13,6 +13,8 @@ Route::get('/login', function () {
     return view('login');
 });
 
+Route::get('a', [UserController::class, 'user_check']);
+
 Route::get('/registrasi', [UserController::class, 'viewRegister'])->name('registrasi');
 Route::get('/login', [UserController::class, 'viewLogin'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('Login');
@@ -31,7 +33,9 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::post('/verify/{unique_id}', [VerifyController::class, 'verify']);
 });
 
-Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {
+
+
+Route::middleware('auth:web')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard']);
 
     Route::get('/history', function () {
@@ -42,7 +46,27 @@ Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {
         return view('profile');
     });
 
+    Route::get('/scan_food', function() {
+        return view('scan_food');
+    });
+
     Route::post('/add-meal', [DailyConsumptionController::class, 'create']);
     Route::post('/gemini_api', [DailyConsumptionController::class, 'create_by_pic']);
 
 });
+
+// Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {
+//     Route::get('/dashboard', [UserController::class, 'dashboard']);
+
+//     Route::get('/history', function () {
+//         return view('history');
+//     });
+
+//     Route::get('/profile', function () {
+//         return view('profile');
+//     });
+
+//     Route::post('/add-meal', [DailyConsumptionController::class, 'create']);
+//     Route::post('/gemini_api', [DailyConsumptionController::class, 'create_by_pic']);
+
+// });

@@ -37,32 +37,45 @@ class DailyConsumptionController extends Controller
 
     public function create_by_pic(Request $request)
     {
-        $request->validate([
-            'file' => 'required'
-        ]);
-
-        $gambar = $request->file('file');
-
-        $response = Http::attach('file', 
-            fopen($gambar->getPathname(), 'r',
-            $gambar->getClientOriginalName())
-        )->post('http://127.0.0.1:5000/gemini_api');
+        try{
             
-        $user_id = Auth::user()->id;
+            $request->validate([
+                'file' => 'required'
+            ]);
 
-        $datas = [];
+            $gambar = $request->file('file');
 
-        foreach($response->json() as $result){
-            $datas[] = [
-                'food_name' => $result['nama'],
-                'calories' => $result['kalori'],
-                'user_id' => $user_id
-            ];
+            $response = Http::attach('file', 
+                fopen($gambar->getPathname(), 'r',
+                $gambar->getClientOriginalName())
+            )->post('http://127.0.0.1:5000/gemini_api');
+                
+            $user_id = Auth::user()->id;
+
+            $datas = [];
+
+            foreach($response->json() as $result){
+                $datas[] = [
+                    'food_name' => $result['nama'],
+                    'calories' => $result['kalori'],
+                    'user_id' => $user_id
+                ];
+            }
+
+            DailyConsumption::insert($datas);
+
+            return response()->json([
+                'result' => $response->json()
+            ]);
+
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ]);
         }
-
-        DailyConsumption::insert($datas);
-
-        
-
+        return response()->json([
+            'status' => 'berhasil'
+        ]);
     }
 }

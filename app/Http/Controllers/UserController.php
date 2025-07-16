@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
+    public function user_check()
+    {
+        return response()->json([
+            'user' => Auth::user()
+        ]);
+    }
+    
     public function viewLogin() {
         return view('auth.login');
     }
@@ -35,7 +42,7 @@ class UserController extends Controller
     public function login(Request $request)
     {
         try{
-            
+    
             $field = $request->validate([
                 'email' => 'email|required',
                 'password' => 'required'
@@ -45,13 +52,10 @@ class UserController extends Controller
                 throw new \Exception ('Wrong email or password');
             }
 
-            
-
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');            
 
         }catch(\Exception $e){
-            dd($e);
 
             return redirect()->back()->with('error', $e->getMessage());
         }
