@@ -93,63 +93,12 @@
                     <i data-feather="plus" class="w-5 h-5"></i>
                     <span>Add Meal</span>
                 </button>
-                <button class="flex items-center justify-center space-x-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-300 transition-colors">
+                <a href="/scan_food" class="flex items-center justify-center space-x-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-300 transition-colors">
                     <i data-feather="camera" class="w-5 h-5"></i>
                     <span>Scan Food</span>
-                </button>
+                </a>
             </div>
         </div>
     </div>
-
-    <form action="/gemini_api" method="POST" enctype="multipart/form-data">
-        @csrf
-        <input type="file" name="file">
-        <button type="submit">submit</button>
-    </form>
-
-
-<!-- Komponen Modal -->
-<div id="formModal" class="hidden">
-    <h2 class="text-xl font-bold mb-4">Form Pendaftaran</h2>
-    
-    <form method="POST" action="/add-meal">
-        @csrf
-        <div class="mb-4">
-            <label class="block">Nama makanan</label>
-            <input type="text" name="food_name"  class="w-full border rounded p-2" required>
-        </div>
-        <div class="mb-4">
-            <label class="block">Kalori</label>
-            <input type="number" name="calories" class="w-full border rounded p-2" required>
-        </div>
-
-        <div class="flex justify-end gap-2">
-            <button type="button"
-                onclick="document.getElementById('formModal').classList.add('hidden')"
-                class="px-4 py-2 bg-gray-300 rounded">
-                Batal
-            </button>
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">
-                Kirim
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Komponen Modal -->
-<div>
-    <h2 class="text-xl font-bold mb-4">Form Pendaftaran</h2>
-    
-    <form method="POST" action="/gemini_api">
-        @csrf
-        <div class="mb-4">
-            <label class="block">Nama makanan</label>
-            <input type="file" name="file"  class="w-full border rounded p-2" required>
-
-        </div>
-        <button type="submit">submit</button>
-
-    </form>
-</div>
 
 </x-layout>

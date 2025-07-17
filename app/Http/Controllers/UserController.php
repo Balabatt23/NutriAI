@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DailyConsumption;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,11 +26,12 @@ class UserController extends Controller
     public function viewRegister() {
         return view('auth.registrasi');
     }
+    
     public function dashboard()
     {
         $user = Auth::user();
 
-        $meals = $user->daily_consumption;
+        $meals = $user->daily_consumption()->whereDate('created_at', Carbon::today())->get();
 
         $day_calories_total = $user->daily_consumption()->sum('calories');
 
@@ -79,6 +81,7 @@ class UserController extends Controller
         ]);
 
         $request['status'] = 'verify';
+
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
