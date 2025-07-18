@@ -80,7 +80,7 @@
             const form = new FormData();
             form.append('file', blob, 'snapshot.png'); // ✅ kirim blob, bukan string base64
 
-            fetch('/gemini_api', {
+            fetch('/daily-consumption/create-by-pic', {
                 method: "POST",
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}' // jangan tambahkan Content-Type!

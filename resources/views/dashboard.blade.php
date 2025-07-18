@@ -73,29 +73,36 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm mb-8">
                     <h3 class="text-xl font-semibold text-gray-900 mb-6">Meals</h3>
                     
-                    <!-- Drag & Drop Area -->
-                    <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 transition-colors duration-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer">
-                        <i data-feather="upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-                        <p class="text-gray-600 mb-2">Drag & drop food image here</p>
-                        <p class="text-sm text-gray-500">or click to upload</p>
+                    <div class="flex gap-4 mb-6">
+                        <button id="uploadTab" class="tab-btn bg-blue-500 text-white px-4 py-2 rounded-lg font-medium">Upload Gambar</button>
+                        <button id="scanTab" class="tab-btn bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-medium">Scan Kamera</button>
                     </div>
-                    <input type="file" id="fileInput" accept="image/*" class="hidden">
 
-                    <!-- Existing Meals from Database -->
-                    <div class="space-y-4 mb-6">
-                        @foreach($meals as $meal)
-                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div>
-                                        <h4 class="font-medium text-gray-900">{{ $meal->food_name }}</h4>
-                                        <p class="text-sm text-gray-500">{{$meal->calories}} • 15g protein • 45g carbs</p>
-                                    </div>
-                                </div>
-                                <button class="delete-meal text-red-500 hover:text-red-700" data-id="{{ $meal->id }}">
-                                    <i data-feather="trash-2" class="w-4 h-4" ></i>
-                                </button>
-                            </div>
-                        @endforeach
+                    <!-- Drag & Drop Area -->
+                    <div id="uploadSection" class="section">
+                        <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 transition-colors duration-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer">
+                            <i data-feather="upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                            <p class="text-gray-600 mb-2">Drag & drop food image here</p>
+                            <p class="text-sm text-gray-500">or click to upload</p>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*" class="hidden">  
+                    </div>
+
+                    <!-- Scan Kamera Section -->
+                    <div id="scanSection" class="section hidden">
+                        <div class="relative rounded-2xl overflow-hidden shadow-md bg-black mb-4">
+                            <video id="video" autoplay playsinline class="w-full rounded-2xl"></video>
+                        </div>
+                        <div class="flex justify-center mb-4">
+                            <button onclick="takeSnapshot()" class="bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-3 rounded-full flex items-center space-x-2">
+                                <i data-feather="camera" class="w-5 h-5"></i>
+                                <span>Ambil Foto</span>
+                            </button>
+                        </div>
+                        <div id="snapshotContainer" class="hidden mb-4">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-2">Hasil Foto</h2>
+                            <img id="snapshot" class="rounded-xl shadow-md" alt="Snapshot hasil">
+                        </div>
                     </div>
 
                     <!-- Quick Add Section -->

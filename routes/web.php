@@ -58,6 +58,8 @@ Route::middleware('auth:web')->group(function () {
 
     Route::delete('/daily-consumption/{id}', [DailyConsumptionController::class, 'delete'])
         ->name('daily-consumption.delete');
+        
+    Route::get('/daily-consumption/today', [DailyConsumptionController::class, 'todayMeals']);
 });
 
 // Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {

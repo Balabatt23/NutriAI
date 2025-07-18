@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Http;
 
 class DailyConsumptionController extends Controller
 {
+
+    public function todayMeals() {
+        $meals = DailyConsumption::whereDate('created_at', now()->toDateString())->get();
+
+        return response()->json([
+            'status' => true,
+            'meals' => $meals
+        ]);
+    }
     public function create(Request $request)
     {
         try{
