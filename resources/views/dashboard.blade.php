@@ -91,8 +91,8 @@
                                         <p class="text-sm text-gray-500">{{$meal->calories}} • 15g protein • 45g carbs</p>
                                     </div>
                                 </div>
-                                <button class="text-red-500 hover:text-red-700">
-                                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                                <button class="delete-meal text-red-500 hover:text-red-700" data-id="{{ $meal->id }}">
+                                    <i data-feather="trash-2" class="w-4 h-4" ></i>
                                 </button>
                             </div>
                         @endforeach
@@ -188,5 +188,6 @@
                 </form>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="{{ asset('js/food-detection.js') }}"></script>
     </x-layout>

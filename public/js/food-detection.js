@@ -206,9 +206,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Delete meal functionality
     function deleteMeal(mealElement, calories) {
-        mealElement.remove();
-        updateNutritionStats(-calories, 0, 0);
-        showNotification('Meal removed', 'info');
+        const deleteBtn = mealElement.querySelector('.delete-meal');
+        const mealId = deleteBtn.dataset.mealId;
+
+        // Jika ID tidak valid (temp), hapus langsung
+        if (!mealId || mealId.startsWith('temp-')) {
+            mealElement.remove();
+            updateNutritionStats(-calories, 0, 0);
+            showNotification('Meal removed', 'info');
+            return;
+        }
+
+        // Konfirmasi
+        if (!confirm('Yakin ingin menghapus makanan ini?')) return;
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                      document.querySelector('input[name="_token"]')?.value;
+
+        fetch(`/meals/${mealId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Delete failed');
+            return res.json();
+        })
+        .then(data => {
+            mealElement.remove();
+            updateNutritionStats(-calories, 0, 0);
+            showNotification('Meal deleted successfully!', 'success');
+        })
+        .catch(err => {
+            console.error(err);
+            showNotification('Failed to delete meal', 'error');
+        });
     }
 
     // Manual modal handlers
@@ -293,6 +327,29 @@ document.addEventListener('DOMContentLoaded', function() {
     manualModal.addEventListener('click', function(e) {
         if (e.target === manualModal) {
             manualModal.classList.add('hidden');
+        }
+    });
+});
+document.addEventListener('DOMContentLoaded', function () {
+    $(document).on('click', '.delete-meal', function () {
+        const mealId = $(this).data('id'); // atau data('meal-id') jika atributnya seperti itu
+        const parent = $(this).closest('.flex');
+
+        if (confirm('Yakin ingin menghapus makanan ini?')) {
+            $.ajax({
+                url: `/daily-consumption/${mealId}`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    parent.remove(); // Hapus dari tampilan
+                    console.log(response.message);
+                },
+                error: function (xhr) {
+                    alert('Gagal menghapus makanan.');
+                }
+            });
         }
     });
 });
