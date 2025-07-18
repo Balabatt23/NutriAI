@@ -490,6 +490,8 @@
 
         function get_food_data(imgDataUrl) {
             const blob = dataURLtoBlob(imgDataUrl); // ✅ ubah data URL menjadi Blob
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                        document.querySelector('input[name="_token"]')?.value;
 
             const form = new FormData();
             form.append('file', blob, 'snapshot.png'); // ✅ kirim blob, bukan string base64
@@ -497,7 +499,8 @@
             fetch('/daily-consumption/create-by-pic', {
                 method: "POST",
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // jangan tambahkan Content-Type!
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
                 },
                 body: form
             })
