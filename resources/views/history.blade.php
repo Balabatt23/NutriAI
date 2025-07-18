@@ -143,162 +143,176 @@
 
     <script>
         // Initialize Feather Icons
-        feather.replace();
 
-        // Calendar functionality
-        let currentDate = new Date();
-        let selectedDate = new Date(2024, 9, 22); // October 22, 2024
+        document.addEventListener('DOMContentLoaded', function(){
 
-        // Sample data for different dates
-        const historyData = {
-            '2024-10-22': {
-                meals: [
-                    { type: 'Breakfast', calories: 230, icon: 'coffee' },
-                    { type: 'Lunch', calories: 450, icon: 'sun' },
-                    { type: 'Dinner', calories: 600, icon: 'moon' },
-                    { type: 'Snacks', calories: 120, icon: 'cookie' }
-                ]
-            },
-            '2024-10-05': {
-                meals: [
-                    { type: 'Breakfast', calories: 300, icon: 'coffee' },
-                    { type: 'Lunch', calories: 500, icon: 'sun' },
-                    { type: 'Dinner', calories: 550, icon: 'moon' }
-                ]
-            },
-            '2024-10-15': {
-                meals: [
-                    { type: 'Breakfast', calories: 280, icon: 'coffee' },
-                    { type: 'Lunch', calories: 420, icon: 'sun' },
-                    { type: 'Dinner', calories: 680, icon: 'moon' },
-                    { type: 'Snacks', calories: 150, icon: 'cookie' }
-                ]
-            }
-        };
-
-        function generateCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+                        // Calendar functionality
+            let currentDate = new Date();
+            let selectedDate = new Date(2024, 9, 22); // October 22, 2024
             
-            // Update month display
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                               'July', 'August', 'September', 'October', 'November', 'December'];
-            document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
-
-            // Get first day of month and number of days
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            const calendarGrid = document.getElementById('calendar-grid');
-            calendarGrid.innerHTML = '';
-
-            // Add empty cells for days before the first day of month
-            for (let i = 0; i < firstDay; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'h-12';
-                calendarGrid.appendChild(emptyCell);
-            }
-
-            // Add days of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'h-12 flex items-center justify-center cursor-pointer calendar-day rounded-lg text-sm font-medium';
-                dayCell.textContent = day;
-                
-                // Check if this day has data
-                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (historyData[dateKey]) {
-                    dayCell.classList.add('text-green-600', 'font-semibold');
+            // Sample data for different dates
+            const historyData = {
+                '2024-10-22': {
+                    meals: [
+                        { type: 'Breakfast', calories: 230, icon: 'coffee' },
+                        { type: 'Lunch', calories: 450, icon: 'sun' },
+                        { type: 'Dinner', calories: 600, icon: 'moon' },
+                        { type: 'Snacks', calories: 120, icon: 'cookie' }
+                    ]
+                },
+                '2024-10-05': {
+                    meals: [
+                        { type: 'Breakfast', calories: 300, icon: 'coffee' },
+                        { type: 'Lunch', calories: 500, icon: 'sun' },
+                        { type: 'Dinner', calories: 550, icon: 'moon' }
+                    ]
+                },
+                '2024-10-15': {
+                    meals: [
+                        { type: 'Breakfast', calories: 280, icon: 'coffee' },
+                        { type: 'Lunch', calories: 420, icon: 'sun' },
+                        { type: 'Dinner', calories: 680, icon: 'moon' },
+                        { type: 'Snacks', calories: 150, icon: 'cookie' }
+                    ]
                 }
-                
-                // Mark selected date
-                if (selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year) {
-                    dayCell.classList.add('selected');
+            };
+
+            window.generateCalendar = function () {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                // Update month display
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                                'July', 'August', 'September', 'October', 'November', 'December'];
+                document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
+
+                // Get first day of month and number of days
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                const calendarGrid = document.getElementById('calendar-grid');
+                calendarGrid.innerHTML = '';
+
+                // Add empty cells for days before the first day of month
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'h-12';
+                    calendarGrid.appendChild(emptyCell);
                 }
-                
-                dayCell.addEventListener('click', () => selectDate(year, month, day));
-                calendarGrid.appendChild(dayCell);
+
+                // Add days of the month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'h-12 flex items-center justify-center cursor-pointer calendar-day rounded-lg text-sm font-medium';
+                    dayCell.textContent = day;
+
+                    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const thisDate = new Date(year, month, day);
+                    thisDate.setHours(0, 0, 0, 0);
+
+                    if (historyData[dateKey]) {
+                        dayCell.classList.add('text-green-600', 'font-semibold');
+                    }
+
+                    if (selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year) {
+                        dayCell.classList.add('selected');
+                    }
+
+                    if (thisDate > today) {
+                        dayCell.classList.add('text-gray-400', 'cursor-not-allowed');
+                        // Jangan tambahkan event listener klik
+                    } else {
+                        dayCell.addEventListener('click', () => selectDate(year, month, day));
+                    }
+
+                    calendarGrid.appendChild(dayCell);
+                }
+
             }
-        }
 
-        function selectDate(year, month, day) {
-            selectedDate = new Date(year, month, day);
-            generateCalendar();
-            updateSelectedDateDetails();
-        }
+            window.selectDate = function (year, month, day) {
+                selectedDate = new Date(year, month, day);
+                generateCalendar();
+                updateSelectedDateDetails();
+            }
 
-        function updateSelectedDateDetails() {
-            const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-            const dateStr = selectedDate.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-            
-            document.getElementById('selected-date').textContent = dateStr;
-            
-            const mealsList = document.getElementById('meals-list');
-            const data = historyData[dateKey];
-            
-            if (data) {
-                mealsList.innerHTML = '';
-                let totalCalories = 0;
-                
-                data.meals.forEach(meal => {
-                    totalCalories += meal.calories;
-                    const mealDiv = document.createElement('div');
-                    mealDiv.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-xl';
-                    mealDiv.innerHTML = `
-                        <div class="meal-icon">
-                            <i data-feather="${meal.icon}" class="w-6 h-6 text-gray-700"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-medium text-gray-900">${meal.type}</h4>
-                            <p class="text-green-600 text-sm font-medium">${meal.calories} kcal</p>
-                        </div>
-                    `;
-                    mealsList.appendChild(mealDiv);
+            window.updateSelectedDateDetails = function() {
+                const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+                const dateStr = selectedDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
                 });
                 
-                // Update total calories
-                const totalDiv = document.createElement('div');
-                totalDiv.className = 'mt-6 pt-4 border-t border-gray-200';
-                totalDiv.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg font-semibold text-gray-900">Total Calories</span>
-                        <span class="text-2xl font-bold text-green-600">${totalCalories.toLocaleString()} kcal</span>
-                    </div>
-                `;
-                mealsList.appendChild(totalDiv);
+                document.getElementById('selected-date').textContent = dateStr;
                 
-                feather.replace();
-            } else {
-                mealsList.innerHTML = `
-                    <div class="text-center py-8">
-                        <i data-feather="calendar-x" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-                        <p class="text-gray-500">No nutrition data for this date</p>
-                    </div>
-                `;
-                feather.replace();
+                const mealsList = document.getElementById('meals-list');
+                const data = historyData[dateKey];
+                
+                if (data) {
+                    mealsList.innerHTML = '';
+                    let totalCalories = 0;
+                    
+                    data.meals.forEach(meal => {
+                        totalCalories += meal.calories;
+                        const mealDiv = document.createElement('div');
+                        mealDiv.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-xl';
+                        mealDiv.innerHTML = `
+                            <div class="meal-icon">
+                                <i data-feather="${meal.icon}" class="w-6 h-6 text-gray-700"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900">${meal.type}</h4>
+                                <p class="text-green-600 text-sm font-medium">${meal.calories} kcal</p>
+                            </div>
+                        `;
+                        mealsList.appendChild(mealDiv);
+                    });
+                    
+                    // Update total calories
+                    const totalDiv = document.createElement('div');
+                    totalDiv.className = 'mt-6 pt-4 border-t border-gray-200';
+                    totalDiv.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-semibold text-gray-900">Total Calories</span>
+                            <span class="text-2xl font-bold text-green-600">${totalCalories.toLocaleString()} kcal</span>
+                        </div>
+                    `;
+                    mealsList.appendChild(totalDiv);
+                    
+                    // feather.replace();
+                } else {
+                    mealsList.innerHTML = `
+                        <div class="text-center py-8">
+                            <i data-feather="calendar-x" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                            <p class="text-gray-500">No nutrition data for this date</p>
+                        </div>
+                    `;
+                    // feather.replace();
+                }
             }
-        }
 
-        function previousMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
+            window.previousMonth = function() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                generateCalendar();
+            }
+
+            window.nextMonth = function() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                generateCalendar();
+            }
+
+            window.goBack = function() {
+                window.history.back();
+            }
+            // feather.replace();
+
+            // Initialize
             generateCalendar();
-        }
+            updateSelectedDateDetails();
+        });
 
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            generateCalendar();
-        }
 
-        function goBack() {
-            window.history.back();
-        }
-
-        // Initialize
-        generateCalendar();
-        updateSelectedDateDetails();
     </script>
 </x-layout>

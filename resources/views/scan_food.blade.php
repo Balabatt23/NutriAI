@@ -44,9 +44,18 @@
                 alert('Tidak bisa mengakses kamera: ' + err.message);
             });
 
-        function dataURLtoBlob(dataURL) {
+       function dataURLtoBlob(dataURL) {
             const arr = dataURL.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
+            if (arr.length !== 2) {
+                throw new Error("Invalid dataURL format");
+            }
+
+            const mimeMatch = arr[0].match(/:(.*?);/);
+            if (!mimeMatch) {
+                throw new Error("Invalid MIME type in dataURL");
+            }
+
+            const mime = mimeMatch[1];
             const bstr = atob(arr[1]);
             let n = bstr.length;
             const u8arr = new Uint8Array(n);
@@ -57,6 +66,7 @@
 
             return new Blob([u8arr], { type: mime });
         }
+
 
 
         function takeSnapshot() {
@@ -80,7 +90,7 @@
             const form = new FormData();
             form.append('file', blob, 'snapshot.png'); // ✅ kirim blob, bukan string base64
 
-            fetch('/gemini_api', {
+            fetch('/daily-consumption/create-by-pic', {
                 method: "POST",
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}' // jangan tambahkan Content-Type!

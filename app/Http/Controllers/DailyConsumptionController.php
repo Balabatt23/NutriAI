@@ -55,6 +55,14 @@ class DailyConsumptionController extends Controller
                 fopen($gambar->getPathname(), 'r'),
                 $gambar->getClientOriginalName()
             )->post('http://127.0.0.1:5000/gemini_api');
+
+            $results = $response->json();
+            
+            $first_item = $results[0] ?? false;
+
+            if ($results === [] || $results === null || $first_item || !$first_item['kalori'] || !$first_item['nama'] || $first_item['nama'] === 'null' || $first_item['status'] === false){
+                throw new \Exception ("There is no food in the picture.");
+            }
                 
             $user_id = Auth::user()->id;
 
@@ -62,7 +70,7 @@ class DailyConsumptionController extends Controller
 
             $timestamps = Carbon::now();
 
-            foreach($response->json() as $result){
+            foreach($results as $result){
                 $datas[] = [
                     'food_name' => $result['nama'],
                     'calories' => $result['kalori'],
@@ -76,7 +84,7 @@ class DailyConsumptionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $response->json()[0] ?? []
+                'data' => $results()[0] ?? []
             ]);
 
         }catch(\Exception $e){
@@ -86,7 +94,8 @@ class DailyConsumptionController extends Controller
             ]);
         }
     }
-     public function delete(Request $request, $id)
+
+    public function delete(Request $request, $id)
     {
         try {
             $meal = DailyConsumption::where('id', $id)

@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          document.querySelector('input[name="_token"]')?.value;
             
             // Send to backend
-            const response = await fetch('/daily-consumption/create-by-pic', {
+        const response = await fetch('/gemini-api', {
                 method: 'POST',
                 body: formData,
                 headers: {
