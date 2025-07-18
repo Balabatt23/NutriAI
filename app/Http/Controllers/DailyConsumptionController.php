@@ -15,10 +15,14 @@ class DailyConsumptionController extends Controller
         try{
             $field = $request->validate([
                 'food_name' => 'required',
-                'calories' => 'required'
+                'calories' => 'required',
+                'protein' => 'nullable|numeric|min:0',
+                'carbs' => 'nullable|numeric|min:0',
+                'meal_type' => 'nullable|string|in:breakfast,lunch,dinner,snack'
             ]);
 
             $field['user_id'] = Auth::user()->id;
+            $field['date'] = Carbon::now()->format('Y-m-d');
 
             $data = DailyConsumption::create($field);
 
@@ -41,14 +45,15 @@ class DailyConsumptionController extends Controller
         try{
             
             $request->validate([
-                'file' => 'required'
+                'file' => 'required|image|max:10240'
             ]);
 
             $gambar = $request->file('file');
 
-            $response = Http::attach('file', 
-                fopen($gambar->getPathname(), 'r',
-                $gambar->getClientOriginalName())
+            $response = Http::attach(
+                'file',
+                fopen($gambar->getPathname(), 'r'),
+                $gambar->getClientOriginalName()
             )->post('http://127.0.0.1:5000/gemini_api');
                 
             $user_id = Auth::user()->id;
@@ -70,7 +75,8 @@ class DailyConsumptionController extends Controller
             DailyConsumption::insert($datas);
 
             return response()->json([
-                'result' => $response->json()
+                'success' => true,
+                'data' => $response->json()[0] ?? []
             ]);
 
         }catch(\Exception $e){
@@ -79,8 +85,28 @@ class DailyConsumptionController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-        return response()->json([
-            'status' => 'berhasil'
-        ]);
+    }
+     public function delete(Request $request, $id)
+    {
+        try {
+            $meal = DailyConsumption::where('id', $id)
+                ->where('user_id', Auth::user()->id)
+                ->firstOrFail();
+
+            $meal->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Makanan berhasil dihapus.',
+                'data' => $meal
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error deleting meal: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal menghapus makanan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

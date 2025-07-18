@@ -50,9 +50,14 @@ Route::middleware('auth:web')->group(function () {
         return view('scan_food');
     });
 
-    Route::post('/add-meal', [DailyConsumptionController::class, 'create']);
-    Route::post('/gemini_api', [DailyConsumptionController::class, 'create_by_pic']);
+    Route::post('/daily-consumption/create-by-pic', [DailyConsumptionController::class, 'create_by_pic'])
+        ->name('daily-consumption.create-by-pic');
 
+    Route::post('/daily-consumption/create', [DailyConsumptionController::class, 'create'])
+        ->name('daily-consumption.create');
+
+    Route::delete('/daily-consumption/{id}', [DailyConsumptionController::class, 'delete'])
+        ->name('daily-consumption.delete');
 });
 
 // Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {
