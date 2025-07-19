@@ -49,15 +49,7 @@
         </div>
 
         <!-- Header -->
-        <div class="flex items-center justify-between p-4 bg-white border-b border-gray-100 md:p-6">
-            <button class="p-2 -ml-2 md:hidden" onclick="goBack()">
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </button>
-            <h1 class="text-xl font-semibold text-gray-900 md:text-2xl">Profile</h1>
-            <div class="w-10 md:hidden"></div>
-        </div>
+
 
         <!-- Desktop Layout -->
         <div class="md:grid md:grid-cols-3 md:gap-8 md:p-6">
@@ -102,7 +94,7 @@
                     </div>
 
                     <!-- Name -->
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2 md:text-3xl">Sophia Carter</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2 md:text-3xl">{{ $user->username }}</h2>
                     <button class="text-green-600 font-medium text-sm md:text-base hover:text-green-700 transition-colors" onclick="editProfile()">Edit Profile</button>
                 </div>
             </div>
@@ -118,7 +110,7 @@
                         <!-- Age -->
                         <div class="mb-6">
                             <label class="block text-gray-700 font-medium mb-1 md:text-lg">Age</label>
-                            <p class="text-green-600 text-lg md:text-xl">28</p>
+                            <p class="text-green-600 text-lg md:text-xl">{{ $user->age }}</p>
                         </div>
 
                         <!-- Height -->

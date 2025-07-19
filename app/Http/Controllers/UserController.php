@@ -19,6 +19,13 @@ class UserController extends Controller
         ]);
     }
     
+    public function profile_page()
+    {
+        return view('profile', [
+            'user' => Auth::user()
+        ]);
+    }
+
     public function viewLogin() {
         return view('auth.login');
     }

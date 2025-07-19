@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->float('weight')->nullable();
             $table->float('height')->nullable();
+            $table->date('birth_date')->nullable();
             $table->float('height_target')->nullable();
             $table->text('profile_pic')->nullable();
             $table->string('password');

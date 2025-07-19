@@ -42,9 +42,7 @@ Route::middleware('auth:web')->group(function () {
         return view('history');
     });
 
-    Route::get('/profile', function () {
-        return view('profile');
-    });
+    Route::get('/profile', [UserController::class, 'profile_page']);
 
     Route::get('/scan_food', function() {
         return view('scan_food');
@@ -60,6 +58,8 @@ Route::middleware('auth:web')->group(function () {
         ->name('daily-consumption.delete');
         
     Route::get('/daily-consumption/today', [DailyConsumptionController::class, 'todayMeals']);
+
+    Route::get('/daily-consumption/{date}', [DailyConsumptionController::class, 'get_by_date']);
 });
 
 // Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {

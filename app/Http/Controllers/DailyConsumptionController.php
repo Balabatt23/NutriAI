@@ -19,6 +19,25 @@ class DailyConsumptionController extends Controller
             'meals' => $meals
         ]);
     }
+
+    public function get_by_date($date)
+    {
+        try{
+            $meals = DailyConsumption::whereDate('created_at', $date)->get();
+
+            return response()->json([
+                'status' => true,
+                'meals' => $meals
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
+
     public function create(Request $request)
     {
         try{

@@ -112,12 +112,7 @@
             </div>
 
             <!-- Total Calories for the Day -->
-            <div class="mt-6 pt-4 border-t border-gray-200">
-                <div class="flex justify-between items-center">
-                    <span class="text-lg font-semibold text-gray-900">Total Calories</span>
-                    <span class="text-2xl font-bold text-green-600">1,400 kcal</span>
-                </div>
-            </div>
+  
         </div>
     </div>
  
@@ -143,11 +138,12 @@
 
     <script>
         // Initialize Feather Icons
-        feather.replace();
 
         // Calendar functionality
         let currentDate = new Date();
         let selectedDate = new Date(2024, 9, 22); // October 22, 2024
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         // Sample data for different dates
         const historyData = {
@@ -205,6 +201,8 @@
                 dayCell.className = 'h-12 flex items-center justify-center cursor-pointer calendar-day rounded-lg text-sm font-medium';
                 dayCell.textContent = day;
                 
+                const thisDate = new Date(year, month, day);
+
                 // Check if this day has data
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 if (historyData[dateKey]) {
@@ -215,8 +213,13 @@
                 if (selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year) {
                     dayCell.classList.add('selected');
                 }
+
+                if (thisDate > today) {
+                    dayCell.classList.add('text-gray-400', 'cursor-not-allowed');
+                }else{
+                    dayCell.addEventListener('click', () => selectDate(year, month, day));
+                }
                 
-                dayCell.addEventListener('click', () => selectDate(year, month, day));
                 calendarGrid.appendChild(dayCell);
             }
         }
@@ -225,6 +228,16 @@
             selectedDate = new Date(year, month, day);
             generateCalendar();
             updateSelectedDateDetails();
+        }
+
+        async function get_meals_by_date(date) 
+        {
+            return await fetch(`/daily-consumption/${date}`, {
+                'headers': {
+                    'Content-Type' : 'application/json'
+                }
+            }).then(response => response.json());
+
         }
 
         function updateSelectedDateDetails() {
@@ -238,49 +251,53 @@
             document.getElementById('selected-date').textContent = dateStr;
             
             const mealsList = document.getElementById('meals-list');
-            const data = historyData[dateKey];
-            
-            if (data) {
-                mealsList.innerHTML = '';
-                let totalCalories = 0;
-                
-                data.meals.forEach(meal => {
-                    totalCalories += meal.calories;
-                    const mealDiv = document.createElement('div');
-                    mealDiv.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-xl';
-                    mealDiv.innerHTML = `
-                        <div class="meal-icon">
-                            <i data-feather="${meal.icon}" class="w-6 h-6 text-gray-700"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-medium text-gray-900">${meal.type}</h4>
-                            <p class="text-green-600 text-sm font-medium">${meal.calories} kcal</p>
+            const data = get_meals_by_date(dateKey).then(response => {
+                console.log(response)
+
+                if (response.meals[0]) {
+                    mealsList.innerHTML = '';
+                    let totalCalories = 0;
+                    
+                    response.meals.forEach(meal => {
+                        totalCalories += meal.calories;
+                        const mealDiv = document.createElement('div');
+                        mealDiv.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-xl';
+                        mealDiv.innerHTML = `
+                            <div class="meal-icon">
+                                <i data-feather="${meal.icon}" class="w-6 h-6 text-gray-700"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900">${meal.food_name}</h4>
+                                <p class="text-green-600 text-sm font-medium">${meal.calories} kcal</p>
+                            </div>
+                        `;
+                        mealsList.appendChild(mealDiv);
+                    });
+                    
+                    // Update total calories
+                    const totalDiv = document.createElement('div');
+                    totalDiv.className = 'mt-6 pt-4 border-t border-gray-200';
+                    totalDiv.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-semibold text-gray-900">Total Calories</span>
+                            <span class="text-2xl font-bold text-green-600">${totalCalories.toLocaleString()} kcal</span>
                         </div>
                     `;
-                    mealsList.appendChild(mealDiv);
-                });
-                
-                // Update total calories
-                const totalDiv = document.createElement('div');
-                totalDiv.className = 'mt-6 pt-4 border-t border-gray-200';
-                totalDiv.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg font-semibold text-gray-900">Total Calories</span>
-                        <span class="text-2xl font-bold text-green-600">${totalCalories.toLocaleString()} kcal</span>
-                    </div>
-                `;
-                mealsList.appendChild(totalDiv);
-                
-                feather.replace();
-            } else {
-                mealsList.innerHTML = `
-                    <div class="text-center py-8">
-                        <i data-feather="calendar-x" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-                        <p class="text-gray-500">No nutrition data for this date</p>
-                    </div>
-                `;
-                feather.replace();
-            }
+                    mealsList.appendChild(totalDiv);
+                    
+                    // feather.replace();
+                } else {
+                    mealsList.innerHTML = `
+                        <div class="text-center py-8">
+                            <i data-feather="calendar-x" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                            <p class="text-gray-500">No nutrition data for this date</p>
+                        </div>
+                    `;
+                    // feather.replace();
+                }
+            });
+
+
         }
 
         function previousMonth() {
@@ -296,6 +313,8 @@
         function goBack() {
             window.history.back();
         }
+        // feather.replace();
+
 
         // Initialize
         generateCalendar();
