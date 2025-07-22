@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class DailyConsumptionController extends Controller
 {
@@ -20,69 +19,16 @@ class DailyConsumptionController extends Controller
             'meals' => $meals
         ]);
     }
-
-    public function get_by_date($date)
-    {
-        try{
-            $meals = DailyConsumption::whereDate('created_at', $date)->get();
-
-            return response()->json([
-                'status' => true,
-                'meals' => $meals
-            ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-
-    }
-
     public function create(Request $request)
     {
         try{
             $field = $request->validate([
-                'food_name' => 'nullable',
-                'calories' => 'nullable',
+                'food_name' => 'required',
+                'calories' => 'required',
                 'protein' => 'nullable|numeric|min:0',
                 'carbs' => 'nullable|numeric|min:0',
                 'meal_type' => 'nullable|string|in:breakfast,lunch,dinner,snack'
             ]);
-
-            // dd($request->all());
-
-            if(!$field['calories']){
-                $response = Http::post('http://127.0.0.1:5000/gemini_api', [
-                    'food_name' => $field['food_name']
-                ]);
-
-                $results = json_decode($response);
-                $user = Auth::user();                
-                $daily_calorie = $user->daily_calorie()->whereDate('created_at', Carbon::today())->first();
-                $datas = [];
-                $calorie_total = 0;
-                $now = now();
-
-                foreach($results as $result) {
-                    $datas[] = [
-                        'food_name' => $result->nama,
-                        'calories' => $result->kalori,
-                        'user_id' => $user->id,
-                        'created_at' => $now
-                    ];
-
-                    $calorie_total += $result->kalori;
-                }
-                
-                DailyConsumption::insert($datas);
-
-                $daily_calorie->calories_in += $calorie_total;
-                $daily_calorie->save();
-                
-
-                return redirect()->back();
-            }
 
             $field['user_id'] = Auth::user()->id;
             $field['date'] = Carbon::now()->format('Y-m-d');
@@ -119,7 +65,7 @@ class DailyConsumptionController extends Controller
                 $gambar->getClientOriginalName()
             )->post('http://127.0.0.1:5000/gemini_api');
                 
-            $user = Auth::user();
+            $user_id = Auth::user()->id;
 
             $datas = [];
 
@@ -128,18 +74,14 @@ class DailyConsumptionController extends Controller
             foreach($response->json() as $result){
                 $datas[] = [
                     'food_name' => $result['nama'],
-                    'calories' => $result['kalori'],
-                    'user_id' => $user->id,
+                    'calories' => $result['kalori'] ?? false,
+                    'user_id' => $user_id,
                     'created_at' => $timestamps,
                     'updated_at' => $timestamps
                 ];
             }
 
             DailyConsumption::insert($datas);
-
-            $daily_calorie = $user->daily_calorie()->whereDate('created_at', Carbon::today())->first();
-            $daily_calorie->calories_in += $result['kalori'];
-            $daily_calorie->save(); 
 
             return response()->json([
                 'success' => true,
@@ -170,7 +112,6 @@ class DailyConsumptionController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error deleting meal: ' . $e->getMessage());
-
             return response()->json([
                 'status' => false,
                 'message' => 'Gagal menghapus makanan: ' . $e->getMessage()

@@ -26,6 +26,11 @@
             <div id="snapshotContainer" class="hidden mb-8">
                 <h2 class="text-xl font-semibold text-gray-900 mb-2">Hasil Foto</h2>
                 <img id="snapshot" class="rounded-xl shadow-md" alt="Snapshot hasil">
+
+                <div class="bg-gray-100 rounded-xl shadow-md p-4 flex-1">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Deteksi Makanan</h3>
+                    <p id="foodResult" class="text-gray-700">Sedang memproses...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -90,6 +95,14 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
+                if (data.success && data.data) {
+        document.getElementById('foodResult').innerHTML = `
+            <p><strong>Nama:</strong> ${data.data.nama}</p>
+            <p><strong>Kalori:</strong> ${data.data.kalori} kcal</p>
+        `;
+    } else {
+        document.getElementById('foodResult').innerHTML = `<p class="text-red-600">Gagal mendeteksi makanan.</p>`;
+    }
             })
             .catch(error => console.error('Upload error:', error));
         }

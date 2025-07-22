@@ -55,6 +55,13 @@
                     <span>Profile</span>
                 </a>
             </nav>
+            <form method="POST" action="{{ route('logout') }}" class="mt-6">
+                @csrf
+                <button type="submit" class="w-full flex items-center space-x-3 p-3 text-gray-600 hover:bg-gray-50 rounded-lg">
+                    <i data-feather="log-out" class="w-5 h-5"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -75,5 +82,13 @@
             <i data-feather="user" class="w-6 h-6"></i>
             <span class="text-xs mt-1">Profile</span>
         </a>
+         <!-- Logout -->
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="flex flex-col items-center p-3 text-gray-600">
+            <i data-feather="log-out" class="w-6 h-6"></i>
+            <span>Logout</span>
+        </button>
+    </form>
     </div>
 </div>

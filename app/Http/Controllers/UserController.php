@@ -56,103 +56,98 @@ class UserController extends Controller
         ]);
     }
 
-    public function login(Request $request)
-    {
-        try{
-    
-            $field = $request->validate([
-                'email' => 'email|required',
-                'password' => 'required'
-            ]);
+public function login(Request $request)
+{
+    try {
+        $field = $request->validate([
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
 
-            if(!Auth::attempt($field)){
-                throw new \Exception ('Wrong email or password');
-            }
-
-            $request->session()->regenerate();
-
-            
-            $user = Auth::user();
-
-            // dd($user);            
-            if(!$user->daily_calorie()->whereDate('created_at', Carbon::today())->exists()){
-                
-                $calorie_intake;
-
-                $age = $user->age;
-
-                if($age < 14) $calorie_intake = 1800;
-                elseif($age > 14 && $age <= 18) $calorie_intake = 2200;
-                elseif($age > 18 && $age <= 20) $calorie_intake = 2500;
-                elseif($age > 20 && $age <= 32) $calorie_intake = 2900;
-                elseif($age > 32 && $age <= 50) $calorie_intake = 2500;
-                elseif($age > 50) $calorie_intake = 2000;
-
-                if($user->gender === 'F') $calorie_intake -= 400;
-
-                $response = Http::post('http://127.0.0.1:5000/get_recom_calorie', [
-                    'weight' => $user['weight'],
-                    'height' => $user['height'],
-                    'bmi' => $user['bmi'],
-                    'gender' => $user['gender'] === 'F' ? 1 : 0,
-                    'excercise_frequency' => $user['exercise_frequency'],
-                    'age' => $user['age'],
-                    'caloric_intake' => $calorie_intake,
-                    'daily_steps' => $user['avg_daily_steps'],
-                    'avg_sleep_hours' => $user['avg_sleep_hours'],
-                    'alcohol_consumption' => $user['alcohol_consumption'],
-                    'smoking_habit' => $user['smoking_habit']
-                ]);
-
-                $result = $response->json();
-                
-                DailyCalorie::create([
-                    'calories_in' => 0,
-                    'calories_out' => 0,
-                    'recommended_calories' => $result['result'],
-                    'user_id' => $user->id
-                ]);
-            }
-
-            return redirect()->intended('/dashboard');            
-
-        }catch(\Exception $e){
-
-            return redirect()->back()->with('error', $e->getMessage());
+        if (!Auth::attempt($field)) {
+            throw new \Exception('Wrong email or password');
         }
-    }
 
-    public function testing_model()
-    {
-        try{
-            $user = Auth::user();
-            
+        $request->session()->regenerate();
+        $user = Auth::user();
+
+        // Cek apakah sudah ada daily calorie hari ini
+        if (!$user->daily_calorie()->whereDate('created_at', Carbon::today())->exists()) {
+            $calorie_intake = match (true) {
+                $user->age < 14 => 1800,
+                $user->age <= 18 => 2200,
+                $user->age <= 20 => 2500,
+                $user->age <= 32 => 2900,
+                $user->age <= 50 => 2500,
+                default => 2000,
+            };
+
+            if ($user->gender === 'F') {
+                $calorie_intake -= 400;
+            }
+
             $response = Http::post('http://127.0.0.1:5000/get_recom_calorie', [
-                'weight' => 80,
-                'height' => 174,
-                'bmi' => 26.4,
-                'gender' => 0,
-                'exercise_frequency' => 5,
-                'age' => 20,
-                'caloric_intake' => 2000,
-                'daily_steps' => 7000,
-                'avg_sleep_hours' => 6.5,
-                'alcohol_consumption' => 0,
-                'smoking_habit' => 0,
+                'weight' => $user->weight,
+                'height' => $user->height,
+                'bmi' => $user->bmi,
+                'gender' => $user->gender === 'F' ? 1 : 0,
+                'excercise_frequency' => $user->exercise_frequency,
+                'age' => $user->age,
+                'caloric_intake' => $calorie_intake,
+                'daily_steps' => $user->avg_daily_steps,
+                'avg_sleep_hours' => $user->avg_sleep_hours,
+                'alcohol_consumption' => $user->alcohol_consumption,
+                'smoking_habit' => $user->smoking_habit
             ]);
+
             $result = $response->json();
-        
-            return response()->json([
-                'status' => true, 
-                'result' => $result
-            ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
+
+            DailyCalorie::create([
+                'calories_in' => 0,
+                'calories_out' => 0,
+                'recommended_calories' => $result['result'],
+                'user_id' => $user->id
             ]);
         }
+
+        return redirect()->intended('/dashboard');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
     }
+}
+
+
+    // public function testing_model()
+    // {
+    //     try{
+    //         $user = Auth::user();
+            
+    //         $response = Http::post('http://127.0.0.1:5000/get_recom_calorie', [
+    //             'weight' => 80,
+    //             'height' => 174,
+    //             'bmi' => 26.4,
+    //             'gender' => 0,
+    //             'exercise_frequency' => 5,
+    //             'age' => 20,
+    //             'caloric_intake' => 2000,
+    //             'daily_steps' => 7000,
+    //             'avg_sleep_hours' => 6.5,
+    //             'alcohol_consumption' => 0,
+    //             'smoking_habit' => 0,
+    //         ]);
+    //         $result = $response->json();
+        
+    //         return response()->json([
+    //             'status' => true, 
+    //             'result' => $result
+    //         ]);
+    //     }catch(\Exception $e){
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
 
     public function logout(Request $request)
     {
@@ -173,18 +168,21 @@ class UserController extends Controller
             'height' => 'required|numeric',
             'exercise_frequency' => 'required|numeric|max:7|min:-1',
             'avg_sleep_hours' => 'required|numeric',
-            'avg_daily_steps' => 'required|numeric'
+            'avg_daily_steps' => 'required|numeric',
+            'alcohol_consumption' => 'nullable|boolean',
+            'smoking_habit' => 'nullable|boolean',
         ]);
 
         $field['bmi'] = $field['weight'] / ($field['height'] * $field['height'] / 10000);
-
         $field['status'] = 'verify';
+        $field['alcohol_consumption'] = $request->has('alcohol_consumption');
+        $field['smoking_habit'] = $request->has('smoking_habit');
 
         $user = User::create($field);
 
         // return $this->login($request);
-        // Auth::login($user);
-        return redirect('/login');
+         Auth::login($user);
+        return redirect('/dashboard');
     }
 
     public function update(Request $request)
