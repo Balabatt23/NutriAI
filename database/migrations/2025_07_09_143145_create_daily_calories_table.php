@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('daily_calories', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
+            // $table->date('date');
             $table->float('calories_in');
             $table->float('calories_out');
             $table->float('recommended_calories');
-            $table->float('calorie_deficit');
+            // $table->float('calorie_deficit');
             $table->foreignId('user_id')->constrained(
                 table: 'users',
                 column: 'id'

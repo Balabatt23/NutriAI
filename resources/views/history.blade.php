@@ -62,53 +62,11 @@
 
         <!-- Selected Date Details -->
         <div class="bg-white rounded-2xl p-6 shadow-sm">
-            <h3 class="text-xl font-semibold text-gray-900 mb-6" id="selected-date">October 22, 2024</h3>
+            <h3 class="text-xl font-semibold text-gray-900 mb-6" id="selected-date">{{ date('F j, Y') }}</h3>
             
             <!-- Meals List -->
             <div class="space-y-4" id="meals-list">
-                <!-- Breakfast -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="meal-icon">
-                        <i data-feather="coffee" class="w-6 h-6 text-gray-700"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-medium text-gray-900">Breakfast</h4>
-                        <p class="text-green-600 text-sm font-medium">230 kcal</p>
-                    </div>
-                </div>
-
-                <!-- Lunch -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="meal-icon">
-                        <i data-feather="sun" class="w-6 h-6 text-gray-700"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-medium text-gray-900">Lunch</h4>
-                        <p class="text-green-600 text-sm font-medium">450 kcal</p>
-                    </div>
-                </div>
-
-                <!-- Dinner -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="meal-icon">
-                        <i data-feather="moon" class="w-6 h-6 text-gray-700"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-medium text-gray-900">Dinner</h4>
-                        <p class="text-green-600 text-sm font-medium">600 kcal</p>
-                    </div>
-                </div>
-
-                <!-- Snacks -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                    <div class="meal-icon">
-                        <i data-feather="cookie" class="w-6 h-6 text-gray-700"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-medium text-gray-900">Snacks</h4>
-                        <p class="text-green-600 text-sm font-medium">120 kcal</p>
-                    </div>
-                </div>
+              
             </div>
 
             <!-- Total Calories for the Day -->
@@ -141,36 +99,9 @@
 
         // Calendar functionality
         let currentDate = new Date();
-        let selectedDate = new Date(2024, 9, 22); // October 22, 2024
+        let selectedDate = new Date(); // October 22, 2024
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        // Sample data for different dates
-        const historyData = {
-            '2024-10-22': {
-                meals: [
-                    { type: 'Breakfast', calories: 230, icon: 'coffee' },
-                    { type: 'Lunch', calories: 450, icon: 'sun' },
-                    { type: 'Dinner', calories: 600, icon: 'moon' },
-                    { type: 'Snacks', calories: 120, icon: 'cookie' }
-                ]
-            },
-            '2024-10-05': {
-                meals: [
-                    { type: 'Breakfast', calories: 300, icon: 'coffee' },
-                    { type: 'Lunch', calories: 500, icon: 'sun' },
-                    { type: 'Dinner', calories: 550, icon: 'moon' }
-                ]
-            },
-            '2024-10-15': {
-                meals: [
-                    { type: 'Breakfast', calories: 280, icon: 'coffee' },
-                    { type: 'Lunch', calories: 420, icon: 'sun' },
-                    { type: 'Dinner', calories: 680, icon: 'moon' },
-                    { type: 'Snacks', calories: 150, icon: 'cookie' }
-                ]
-            }
-        };
 
         function generateCalendar() {
             const year = currentDate.getFullYear();
@@ -205,9 +136,7 @@
 
                 // Check if this day has data
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (historyData[dateKey]) {
-                    dayCell.classList.add('text-green-600', 'font-semibold');
-                }
+              
                 
                 // Mark selected date
                 if (selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year) {
@@ -252,7 +181,6 @@
             
             const mealsList = document.getElementById('meals-list');
             const data = get_meals_by_date(dateKey).then(response => {
-                console.log(response)
 
                 if (response.meals[0]) {
                     mealsList.innerHTML = '';

@@ -15,12 +15,25 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('email')->unique();
-            $table->float('weight')->nullable();
-            $table->float('height')->nullable();
+
             $table->date('birth_date')->nullable();
-            $table->float('height_target')->nullable();
+            $table->float('weight_target')->nullable();
             $table->text('profile_pic')->nullable();
             $table->string('password');
+
+            $table->float('weight')->nullable();
+            $table->float('height')->nullable();
+            $table->float('bmi')->nullable();
+            $table->char('gender', 1)->nullable();
+            $table->integer('age')->nullable();
+            
+            $table->integer('exercise_frequency')->nullable();
+            $table->float('avg_sleep_hours')->nullable();
+            $table->integer('avg_daily_steps')->nullable();
+
+            $table->boolean('alcohol_consumption')->nullable();
+            $table->boolean('smoking_habit')->nullable();
+
             $table->enum('status',['verify','active','banned']);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

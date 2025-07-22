@@ -19,11 +19,13 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2 text-gray-700">
                             <i data-feather="calendar" class="w-5 h-5"></i>
-                            <span class="font-medium">Mon, 07 July 2025</span>
+                                <span class="font-medium">{{ date('d-M-Y') }}</span>
                         </div>
                         <i data-feather="chevron-down" class="w-5 h-5 text-gray-500"></i>
                     </div>
                 </div>
+
+                {{-- @dd($max_calorie) --}}
 
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -31,16 +33,16 @@
                     <div class="bg-white rounded-2xl p-6 shadow-sm">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xl font-semibold text-gray-900">Calories</h3>
-                            <span class="text-lg font-semibold text-gray-700" id="calories-count">{{ $day_calorie }}/2000</span>
+                            <span class="text-lg font-semibold text-gray-700" id="calories-count">{{ $max_calorie->calories_in }}/{{ $max_calorie->recommended_calories }}</span>
                         </div>
                         
                         <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
-                            <div class="progress-bar h-3 rounded-full bg-green-500" id="calories-progress" style="width: {{ ($day_calorie / 2000) * 100 }}%"></div>
+                            <div class="progress-bar h-3 rounded-full bg-green-500" id="calories-progress" style="width: {{ ($max_calorie->calories_in / $max_calorie->recommended_calories) * 100 }}%"></div>
                         </div>
                         
                         <p class="text-gray-600">
                             <span class="text-green-600 font-medium">Remaining: </span>
-                            <span class="font-semibold" id="calories-remaining">{{ 2000 - $day_calorie }}</span>
+                            <span class="font-semibold" id="calories-remaining">{{ $max_calorie->recommended_calories - $max_calorie->calories_in }}</span>
                         </p>
                     </div>
 
@@ -72,24 +74,52 @@
                 <!-- Meals Section -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm mb-8">
                     <h3 class="text-xl font-semibold text-gray-900 mb-6">Meals</h3>
-                    
+{{--                     
                     <div class="flex gap-4 mb-6">
                         <button id="uploadTab" class="tab-btn bg-blue-500 text-white px-4 py-2 rounded-lg font-medium">Upload Gambar</button>
                         <button id="scanTab" class="tab-btn bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-medium">Scan Kamera</button>
+                    </div> --}}
+
+                    <div>
+                        <form action="/daily-consumption/create" method="POST">
+                            @csrf
+
+                            <label for="food_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                Nama Makanan <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="food_name" name="food_name" placeholder="nama makanan"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+
+                            <br>
+                            <br>
+
+                            <label for="calories" class="block text-sm font-medium text-gray-700 mb-1">Jumlah Calorie</label>
+                            <input type="number" id="calories" name="calories" placeholder="kkal"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+
+                            <button type="submit" class="my-4 flex items-center justify-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-full font-medium hover:bg-green-600 transition-colors">
+                                <span>Submit</span>
+                            </button>
+
+                        </form>
+
+
                     </div>
 
                     <!-- Drag & Drop Area -->
-                    <div id="uploadSection" class="section">
+                    {{-- <div id="uploadSection" class="section hidden">
                         <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 transition-colors duration-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer">
                             <i data-feather="upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
                             <p class="text-gray-600 mb-2">Drag & drop food image here</p>
                             <p class="text-sm text-gray-500">or click to upload</p>
                         </div>
                         <input type="file" id="fileInput" accept="image/*" class="hidden">  
-                    </div>
+                    </div> --}}
+
+
 
                     <!-- Scan Kamera Section -->
-                    <div id="scanSection" class="section hidden">
+                    {{-- <div id="scanSection" class="section hidden">
                         <div class="relative rounded-2xl overflow-hidden shadow-md bg-black mb-4">
                             <video id="video" autoplay playsinline class="w-full rounded-2xl"></video>
                         </div>
@@ -103,7 +133,7 @@
                             <h2 class="text-xl font-semibold text-gray-900 mb-2">Hasil Foto</h2>
                             <img id="snapshot" class="rounded-xl shadow-md" alt="Snapshot hasil">
                         </div>
-                    </div>
+                    </div> --}}
 
                     <!-- Quick Add Section -->
                     <div class="mb-6">

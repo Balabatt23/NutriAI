@@ -227,6 +227,61 @@
                     </button>
                 </div>
 
+                <div class="relative">
+                    <input 
+                        type="number" 
+                        id="weight" 
+                        placeholder="Weight (Kg)"
+                        name="weight"
+                        required
+                        class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                </div>
+
+                <div class="relative">
+                    <input 
+                        type="number" 
+                        id="hegiht" 
+                        placeholder="Height (cm)"
+                        name="height"
+                        required
+                        class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                </div>
+
+                <div class="relative">
+                    <input 
+                        type="numeric" 
+                        id="exercise_frequency" 
+                        placeholder="How much do you exercise in a week?"
+                        name="exercise_frequency"
+                        required
+                        class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                </div>
+                
+                <div class="relative">
+                    <input 
+                        type="numeric" 
+                        id="avg_sleep_hours" 
+                        placeholder="Average Sleep Hours"
+                        name="avg_sleep_hours"
+                        required
+                        class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                </div>
+
+                <div class="relative">
+                    <input 
+                        type="numeric" 
+                        id="avg_daily_steps" 
+                        placeholder="Average Sleep Hours"
+                        name="avg_daily_steps"
+                        required
+                        class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                </div>
+
                 <!-- Sign Up Button -->
                 <button 
                     type="submit" 

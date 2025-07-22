@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DailyConsumptionController extends Controller
 {
@@ -42,12 +43,46 @@ class DailyConsumptionController extends Controller
     {
         try{
             $field = $request->validate([
-                'food_name' => 'required',
-                'calories' => 'required',
+                'food_name' => 'nullable',
+                'calories' => 'nullable',
                 'protein' => 'nullable|numeric|min:0',
                 'carbs' => 'nullable|numeric|min:0',
                 'meal_type' => 'nullable|string|in:breakfast,lunch,dinner,snack'
             ]);
+
+            // dd($request->all());
+
+            if(!$field['calories']){
+                $response = Http::post('http://127.0.0.1:5000/gemini_api', [
+                    'food_name' => $field['food_name']
+                ]);
+
+                $results = json_decode($response);
+                $user = Auth::user();                
+                $daily_calorie = $user->daily_calorie()->whereDate('created_at', Carbon::today())->first();
+                $datas = [];
+                $calorie_total = 0;
+                $now = now();
+
+                foreach($results as $result) {
+                    $datas[] = [
+                        'food_name' => $result->nama,
+                        'calories' => $result->kalori,
+                        'user_id' => $user->id,
+                        'created_at' => $now
+                    ];
+
+                    $calorie_total += $result->kalori;
+                }
+                
+                DailyConsumption::insert($datas);
+
+                $daily_calorie->calories_in += $calorie_total;
+                $daily_calorie->save();
+                
+
+                return redirect()->back();
+            }
 
             $field['user_id'] = Auth::user()->id;
             $field['date'] = Carbon::now()->format('Y-m-d');
@@ -84,7 +119,7 @@ class DailyConsumptionController extends Controller
                 $gambar->getClientOriginalName()
             )->post('http://127.0.0.1:5000/gemini_api');
                 
-            $user_id = Auth::user()->id;
+            $user = Auth::user();
 
             $datas = [];
 
@@ -94,13 +129,17 @@ class DailyConsumptionController extends Controller
                 $datas[] = [
                     'food_name' => $result['nama'],
                     'calories' => $result['kalori'],
-                    'user_id' => $user_id,
+                    'user_id' => $user->id,
                     'created_at' => $timestamps,
                     'updated_at' => $timestamps
                 ];
             }
 
             DailyConsumption::insert($datas);
+
+            $daily_calorie = $user->daily_calorie()->whereDate('created_at', Carbon::today())->first();
+            $daily_calorie->calories_in += $result['kalori'];
+            $daily_calorie->save(); 
 
             return response()->json([
                 'success' => true,
@@ -131,6 +170,7 @@ class DailyConsumptionController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error deleting meal: ' . $e->getMessage());
+
             return response()->json([
                 'status' => false,
                 'message' => 'Gagal menghapus makanan: ' . $e->getMessage()

@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth:web']], function () {
 });
 
 
+Route::get('/b', [UserController::class, 'testing_model']);
+
 
 Route::middleware('auth:web')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard']);
@@ -53,6 +55,7 @@ Route::middleware('auth:web')->group(function () {
 
     Route::post('/daily-consumption/create', [DailyConsumptionController::class, 'create'])
         ->name('daily-consumption.create');
+    
 
     Route::delete('/daily-consumption/{id}', [DailyConsumptionController::class, 'delete'])
         ->name('daily-consumption.delete');
@@ -60,6 +63,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/daily-consumption/today', [DailyConsumptionController::class, 'todayMeals']);
 
     Route::get('/daily-consumption/{date}', [DailyConsumptionController::class, 'get_by_date']);
+
+
 });
 
 // Route::group(['middleware' => ['auth:web', 'checkStatus']], function () {

@@ -292,7 +292,9 @@
             const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
                         document.querySelector('input[name="_token"]')?.value;
 
-            fetch(`/meals/${mealId}`, {
+            console.log(mealId)
+
+            fetch(`/daily-consumption/${mealId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': token,
@@ -300,6 +302,8 @@
                 }
             })
             .then(res => {
+                console.log(res)
+
                 if (!res.ok) throw new Error('Delete failed');
                 return res.json();
             })

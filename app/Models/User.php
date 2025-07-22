@@ -20,12 +20,23 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'email',
+        'birth_date',
+        'gender',
         'password',
-        'height', 
+        
         'weight',
+        'height', 
         'weight_target',
         'profile_pic',
-        'status'
+        'status',
+
+        'bmi',
+        'exercise_frequency',
+        'avg_sleep_hours',
+        'blood_pressure_systolic',
+        'blood_pressure_diastolic',
+        'alcohol_consumption',
+        'smoking_habit'
     ];
 
     /**
