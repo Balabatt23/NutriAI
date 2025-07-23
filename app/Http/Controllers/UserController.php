@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BodyWeightHistory;
+use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Models\DailyCalorie;
 use App\Models\DailyConsumption;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
+use App\Models\BodyWeightHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Laravel\Socialite\Facades\Socialite;
 
 class UserController extends Controller
 {
@@ -64,6 +65,7 @@ class UserController extends Controller
                 'password' => 'required'
             ]);
 
+<<<<<<< HEAD
                 if(!Auth::attempt($field)){
                     throw new \Exception ('Wrong email or password');
                 }
@@ -125,6 +127,83 @@ class UserController extends Controller
         }
     }
 
+=======
+            if (!Auth::attempt($field)) {
+                throw new \Exception('Wrong email or password');
+            }
+
+            $request->session()->regenerate();
+            $user = Auth::user();
+
+            // Cek apakah sudah ada daily calorie hari ini
+            if (!$user->daily_calorie()->whereDate('created_at', Carbon::today())->exists()) {
+                $calorie_intake = match (true) {
+                    $user->age < 14 => 1800,
+                    $user->age <= 18 => 2200,
+                    $user->age <= 20 => 2500,
+                    $user->age <= 32 => 2900,
+                    $user->age <= 50 => 2500,
+                    default => 2000,
+                };
+
+                if ($user->gender === 'F') {
+                    $calorie_intake -= 400;
+                }
+
+                $response = Http::post('http://127.0.0.1:5000/get_recom_calorie', [
+                    'weight' => $user->weight,
+                    'height' => $user->height,
+                    'bmi' => $user->bmi,
+                    'gender' => $user->gender === 'F' ? 1 : 0,
+                    'excercise_frequency' => $user->exercise_frequency,
+                    'age' => $user->age,
+                    'caloric_intake' => $calorie_intake,
+                    'daily_steps' => $user->avg_daily_steps,
+                    'avg_sleep_hours' => $user->avg_sleep_hours,
+                    'alcohol_consumption' => $user->alcohol_consumption,
+                    'smoking_habit' => $user->smoking_habit
+                ]);
+
+                $result = $response->json();
+
+                DailyCalorie::create([
+                    'calories_in' => 0,
+                    'calories_out' => 0,
+                    'recommended_calories' => $result['result'],
+                    'user_id' => $user->id
+                ]);
+            }
+
+            return redirect()->intended('/dashboard');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function google_redirect() {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function google_callback() {
+        $googleUser = Socialite::driver('google')->user();
+        $user = User::whereEmail($googleUser->email)->first();
+        if(!$user) {
+            $user = User::create([
+                'username' => $googleUser->name,
+                'email' => $googleUser->email,
+                'status' => 'active'
+            ]);
+        }
+        if($user && $user->status == 'verify') {
+            $user->update(['status' => 'active']);
+        }
+        if($user && $user->status == 'banned') {
+            return redirect()->route('login')->with('failed', 'Akun anda telah diblokir');
+        }
+        Auth::login($user);
+        return redirect()->route('dashboard');
+    }
+>>>>>>> 33e8f1f0ab7d5704957f7a74de030aeaf1723ea8
 
     // public function testing_model()
     // {

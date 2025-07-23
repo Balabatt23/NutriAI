@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->float('weight_target')->nullable();
             $table->text('profile_pic')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
 
             $table->float('weight')->nullable();
             $table->float('height')->nullable();

@@ -32,11 +32,5 @@ class DatabaseSeeder extends Seeder
             'avg_sleep_hours' => 6.5,
             // 'caloric_intake' => 2000
         ]);
-
-        // User::factory()->create([
-        //     'username' => 'Test User',
-        //     'email' => 'test@example.com',
-
-        // ]);
     }
 }
