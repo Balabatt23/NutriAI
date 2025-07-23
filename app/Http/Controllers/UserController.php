@@ -74,6 +74,8 @@ class UserController extends Controller
             
             $user = Auth::user();
 
+            // dd($user, $user->daily_calorie()->whereDate('created_at', Carbon::today())->exists());
+
             // dd($user);            
             if(!$user->daily_calorie()->whereDate('created_at', Carbon::today())->exists()){
                 
@@ -118,6 +120,7 @@ class UserController extends Controller
 
         }catch(\Exception $e){
 
+            // dd($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -165,26 +168,85 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-        $field = $request->validate([
-            'username' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
-            'weight' => 'required|numeric',
-            'height' => 'required|numeric',
-            'exercise_frequency' => 'required|numeric|max:7|min:-1',
-            'avg_sleep_hours' => 'required|numeric',
-            'avg_daily_steps' => 'required|numeric'
-        ]);
+        try{
 
-        $field['bmi'] = $field['weight'] / ($field['height'] * $field['height'] / 10000);
+            
+            $field = $request->validate([
+                'username' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8|confirmed',
+                'weight' => 'required|numeric',
+                'height' => 'required|numeric',
+                'age' => 'required|numeric',
+                'exercise_frequency' => 'required|numeric|max:7|min:-1',
+                'avg_sleep_hours' => 'required|numeric',
+                'avg_daily_steps' => 'required|numeric'
+            ]);
 
-        $field['status'] = 'verify';
+            $field['bmi'] = $field['weight'] / ($field['height'] * $field['height'] / 10000);
+            $field['status'] = 'verify';
+            $field['password'] = Hash::make($field['password']);
+            $user = User::create($field);
 
-        $user = User::create($field);
 
-        // return $this->login($request);
-        // Auth::login($user);
-        return redirect('/login');
+            Auth::attempt([
+                'username' => $field['username'],
+                'password' => $request->input('password')
+            ]);
+
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if(!$user->daily_calorie()->whereDate('created_at', Carbon::today())->exists()){
+
+                $calorie_intake;
+
+                $age = $user->age;
+
+                if($age < 14) $calorie_intake = 1800;
+                elseif($age > 14 && $age <= 18) $calorie_intake = 2200;
+                elseif($age > 18 && $age <= 20) $calorie_intake = 2500;
+                elseif($age > 20 && $age <= 32) $calorie_intake = 2900;
+                elseif($age > 32 && $age <= 50) $calorie_intake = 2500;
+                elseif($age > 50) $calorie_intake = 2000;
+
+                if($user->gender === 'F') $calorie_intake -= 400;
+
+                // $response = Http::post('http://127.0.0.1:5000/get_recom_calorie', 
+                dd([
+                    'weight' => $user['weight'],
+                    'height' => $user['height'],
+                    'bmi' => $user['bmi'],
+                    'gender' => $user['gender'] === 'F' ? 1 : 0,
+                    'excercise_frequency' => $user['exercise_frequency'],
+                    'age' => $user['age'],
+                    'caloric_intake' => $calorie_intake,
+                    'daily_steps' => $user['avg_daily_steps'],
+                    'avg_sleep_hours' => $user['avg_sleep_hours'],
+                    'alcohol_consumption' => $user['alcohol_consumption'],
+                    'smoking_habit' => $user['smoking_habit']
+                ]);
+                // );
+
+                $result = $response->json();
+
+                dd($result);
+
+                $user->daily_calorie()->create([
+                    'calories_in' => 0,
+                    'calories_out' => 0,
+                    'recommended_calories' => $result['result'],
+                    // 'user_id' => $user->id
+                ]);
+            }
+
+            // return $this->login($request);
+            // Auth::login($user);
+            return redirect('/dashboard');
+        }catch(\Exception $e){
+            dd($e->getMessage());
+        }
     }
 
     public function update(Request $request)
@@ -200,8 +262,6 @@ class UserController extends Controller
                 'bmi', 
                 'exercise_frequency',
                 'avg_sleep_hours',
-                'blood_pressure_systolic',
-                'blood_pressure_diastolic',
                 'alcohol_consumption',
                 'smoking_habit'
             ]);

@@ -83,6 +83,7 @@
             fetch('/daily-consumption/create-by-pic', {
                 method: "POST",
                 headers: {
+                    // 'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}' // jangan tambahkan Content-Type!
                 },
                 body: form

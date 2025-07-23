@@ -53,11 +53,15 @@ class DailyConsumptionController extends Controller
             // dd($request->all());
 
             if(!$field['calories']){
-                $response = Http::post('http://127.0.0.1:5000/gemini_api', [
+                $response = Http::post('http://192.168.100.211:5000/get_by_name', [
                     'food_name' => $field['food_name']
                 ]);
 
-                $results = json_decode($response);
+                $results = $response->json();
+                // return response()->json([
+                //     'result' => $results
+                // ]);
+
                 $user = Auth::user();                
                 $daily_calorie = $user->daily_calorie()->whereDate('created_at', Carbon::today())->first();
                 $datas = [];
@@ -117,13 +121,22 @@ class DailyConsumptionController extends Controller
                 'file',
                 fopen($gambar->getPathname(), 'r'),
                 $gambar->getClientOriginalName()
-            )->post('http://127.0.0.1:5000/gemini_api');
+            )->post('http://192.168.100.211:5000/get_by_pic');
+
+            return response()->json([
+                'respone' => $response->body(),
                 
+            ]);
+
             $user = Auth::user();
 
             $datas = [];
 
             $timestamps = Carbon::now();
+
+            return response()->json([
+                'result' => $response->json()
+            ]);
 
             foreach($response->json() as $result){
                 $datas[] = [

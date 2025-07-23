@@ -259,6 +259,17 @@
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     >
                 </div>
+
+                <div class="relative">
+                    <input 
+                        type="numeric" 
+                        id="age" 
+                        placeholder="How old are you?"
+                        name="age"
+                        required
+                        class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                </div>
                 
                 <div class="relative">
                     <input 
@@ -275,7 +286,7 @@
                     <input 
                         type="numeric" 
                         id="avg_daily_steps" 
-                        placeholder="Average Sleep Hours"
+                        placeholder="Average Daily Steps"
                         name="avg_daily_steps"
                         required
                         class="input-focus w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
