@@ -49,7 +49,9 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/scan_food', function() {
         return view('scan_food');
     });
-
+    
+    Route::get('/daily-consumption', [DailyConsumptionController::class, 'get_by_date']);
+    
     Route::post('/daily-consumption/create-by-pic', [DailyConsumptionController::class, 'create_by_pic'])
         ->name('daily-consumption.create-by-pic');
 
@@ -62,7 +64,6 @@ Route::middleware('auth:web')->group(function () {
         
     Route::get('/daily-consumption/today', [DailyConsumptionController::class, 'todayMeals']);
 
-    Route::get('/daily-consumption/{date}', [DailyConsumptionController::class, 'get_by_date']);
 
 
 });

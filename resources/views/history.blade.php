@@ -161,10 +161,11 @@
 
         async function get_meals_by_date(date) 
         {
-            return await fetch(`/daily-consumption/${date}`, {
-                'headers': {
-                    'Content-Type' : 'application/json'
-                }
+
+            return await fetch(`/daily-consumption?date=${date}`, {
+                headers: {
+                    'Content-Type' : 'application/json',
+                },
             }).then(response => response.json());
 
         }
@@ -182,7 +183,7 @@
             const mealsList = document.getElementById('meals-list');
             const data = get_meals_by_date(dateKey).then(response => {
 
-                if (response.meals[0]) {
+                if (response.length > 0) {
                     mealsList.innerHTML = '';
                     let totalCalories = 0;
                     

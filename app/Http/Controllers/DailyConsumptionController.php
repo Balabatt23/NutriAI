@@ -20,6 +20,24 @@ class DailyConsumptionController extends Controller
             'meals' => $meals
         ]);
     }
+
+    public function get_by_date(Request $request)
+    {
+        $field = $request->validate([
+            'date' => 'required|date'
+        ]);
+
+        $user = Auth::user();
+
+        $daily_consumption = $user->daily_consumption()->whereDate('created_at', $field['date'])->get();
+
+        return response()->json([
+            'status' => true,
+            'datas' => $daily_consumption
+        ]);
+
+    }
+
     public function create(Request $request)
     {
         try{
@@ -104,26 +122,22 @@ class DailyConsumptionController extends Controller
                 $gambar->getClientOriginalName()
             )->post('http://127.0.0.1:5000/get_by_pic');
 
-            return response()->json([
-                'respone' => $response->body(),
-                
-            ]);
-
             $user = Auth::user();
 
             $datas = [];
 
             $timestamps = Carbon::now();
 
-            return response()->json([
-                'result' => $response->json()
-            ]);
+            $results = $response->json();
+
+            if(!$results[0] || $results[0]['status'] || !$results[0]['kalori'] || !$results[0]['nama']) throw new \Exception('Tidak ada makanan di dalam foto!');
+            
 
             foreach($response->json() as $result){
                 $datas[] = [
                     'food_name' => $result['nama'],
                     'calories' => $result['kalori'] ?? false,
-                    'user_id' => $user_id,
+                    'user_id' => $user->id,
                     'created_at' => $timestamps,
                     'updated_at' => $timestamps
                 ];
