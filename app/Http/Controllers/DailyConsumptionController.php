@@ -53,7 +53,7 @@ class DailyConsumptionController extends Controller
             // dd($request->all());
 
             if(!$field['calories']){
-                $response = Http::post('http://192.168.100.211:5000/get_by_name', [
+                $response = Http::post('http://127.0.0.1:5000/get_by_name', [
                     'food_name' => $field['food_name']
                 ]);
 
@@ -121,7 +121,7 @@ class DailyConsumptionController extends Controller
                 'file',
                 fopen($gambar->getPathname(), 'r'),
                 $gambar->getClientOriginalName()
-            )->post('http://192.168.100.211:5000/get_by_pic');
+            )->post('http://127.0.0.1:5000/get_by_pic');
 
             return response()->json([
                 'respone' => $response->body(),
