@@ -20,31 +20,12 @@ class DailyConsumptionController extends Controller
             'meals' => $meals
         ]);
     }
-
-    public function get_by_date($date)
-    {
-        try{
-            $meals = DailyConsumption::whereDate('created_at', $date)->get();
-
-            return response()->json([
-                'status' => true,
-                'meals' => $meals
-            ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-
-    }
-
     public function create(Request $request)
     {
         try{
             $field = $request->validate([
-                'food_name' => 'nullable',
-                'calories' => 'nullable',
+                'food_name' => 'required',
+                'calories' => 'required',
                 'protein' => 'nullable|numeric|min:0',
                 'carbs' => 'nullable|numeric|min:0',
                 'meal_type' => 'nullable|string|in:breakfast,lunch,dinner,snack'
@@ -141,18 +122,14 @@ class DailyConsumptionController extends Controller
             foreach($response->json() as $result){
                 $datas[] = [
                     'food_name' => $result['nama'],
-                    'calories' => $result['kalori'],
-                    'user_id' => $user->id,
+                    'calories' => $result['kalori'] ?? false,
+                    'user_id' => $user_id,
                     'created_at' => $timestamps,
                     'updated_at' => $timestamps
                 ];
             }
 
             DailyConsumption::insert($datas);
-
-            $daily_calorie = $user->daily_calorie()->whereDate('created_at', Carbon::today())->first();
-            $daily_calorie->calories_in += $result['kalori'];
-            $daily_calorie->save(); 
 
             return response()->json([
                 'success' => true,
@@ -183,7 +160,6 @@ class DailyConsumptionController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error deleting meal: ' . $e->getMessage());
-
             return response()->json([
                 'status' => false,
                 'message' => 'Gagal menghapus makanan: ' . $e->getMessage()

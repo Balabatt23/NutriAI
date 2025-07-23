@@ -30,21 +30,28 @@
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <!-- Calories Card -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-semibold text-gray-900">Calories</h3>
-                            <span class="text-lg font-semibold text-gray-700" id="calories-count">{{ $max_calorie->calories_in }}/{{ $max_calorie->recommended_calories }}</span>
-                        </div>
-                        
-                        <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
-                            <div class="progress-bar h-3 rounded-full bg-green-500" id="calories-progress" style="width: {{ ($max_calorie->calories_in / $max_calorie->recommended_calories) * 100 }}%"></div>
-                        </div>
-                        
-                        <p class="text-gray-600">
-                            <span class="text-green-600 font-medium">Remaining: </span>
-                            <span class="font-semibold" id="calories-remaining">{{ $max_calorie->recommended_calories - $max_calorie->calories_in }}</span>
-                        </p>
-                    </div>
+<div class="bg-white rounded-2xl p-6 shadow-sm">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-900">Calories</h3>
+        <span class="text-lg font-semibold text-gray-700" id="calories-count">
+            {{ optional($max_calorie)->calories_in ?? 0 }}/{{ optional($max_calorie)->recommended_calories ?? 1 }}
+        </span>
+    </div>
+    
+    <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+        <div class="progress-bar h-3 rounded-full bg-green-500" id="calories-progress"
+             style="width: {{ (optional($max_calorie)->calories_in ?? 0) / max((optional($max_calorie)->recommended_calories ?? 1), 1) * 100 }}%">
+        </div>
+    </div>
+    
+    <p class="text-gray-600">
+        <span class="text-green-600 font-medium">Remaining: </span>
+        <span class="font-semibold" id="calories-remaining">
+            {{ (optional($max_calorie)->recommended_calories ?? 0) - (optional($max_calorie)->calories_in ?? 0) }}
+        </span>
+    </p>
+</div>
+
 
                     <!-- Macros Card -->
                     <div class="bg-white rounded-2xl p-6 shadow-sm">

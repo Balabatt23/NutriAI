@@ -18,7 +18,7 @@ Route::get('a', [UserController::class, 'user_check']);
 Route::get('/registrasi', [UserController::class, 'viewRegister'])->name('registrasi');
 Route::get('/login', [UserController::class, 'viewLogin'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('Login');
-Route::get('/logout', [UserController::class, 'logout']);
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::post('/register', [UserController::class, 'create'])->name('register');
 
